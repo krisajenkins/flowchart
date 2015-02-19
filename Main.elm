@@ -78,10 +78,11 @@ rootView : Question -> Html
 rootView q =
   div [id "main"]
       [div [class "container"]
-           [h1 [] [(text (questionString q))]
+           [h1 [] [text "Should I Do It?"]
+           ,h2 [] [text (questionString q)]
            ,div [class "answers"]
                 (List.map (\a -> button [onClick (send uiChannel a)
-                                        ,class "btn btn-lg"]
+                                        ,class "btn btn-lg btn-info"]
                                         [text (answerString a)])
                           (answers q))]]
 
