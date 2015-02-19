@@ -51,28 +51,8 @@ answerString a =
 
 ------------------------------------------------------------
 
-answers : Question -> List Answer
-answers q =
-  let (_,answers) = head (filter (\ (q', _) -> q' == q) flowchart)
-  in List.map fst answers
-
-answerQuestion : Question -> Answer -> Question
-answerQuestion q a =
-  let (_,answers) = head (filter (\ (q', _) -> q' == q) flowchart)
-      (_,response) = (head (filter (\ (a', _) -> a' == a) answers))
-  in response
-
 uiChannel : Channel Answer
 uiChannel = channel NoOp
-
-uiSignal : Signal Answer
-uiSignal = subscribe uiChannel
-
-step : Answer -> Question -> Question
-step a q = answerQuestion q a
-
-model : Signal Question
-model = foldp step flowchartStart uiSignal
 
 rootView : Question -> Html
 rootView q =
@@ -85,6 +65,24 @@ rootView q =
                                         ,class "btn btn-lg btn-info"]
                                         [text (answerString a)])
                           (answers q))]]
+
+------------------------------------------------------------
+
+answers : Question -> List Answer
+answers q = List.map fst (lookup q flowchart)
+
+{-| Lookup the value in an association list structure. -}
+lookup : a -> List (a,b) -> b
+lookup x xs = snd (head (filter ((==) x << fst) xs))
+
+answerQuestion : Question -> Answer -> Question
+answerQuestion q a = lookup q flowchart |> lookup a
+
+step : Answer -> Question -> Question
+step = flip answerQuestion
+
+model : Signal Question
+model = foldp step flowchartStart (subscribe uiChannel)
 
 main : Signal Html
 main = rootView <~ model
