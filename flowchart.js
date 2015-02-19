@@ -3725,6 +3725,9 @@ Elm.Main.make = function (_elm) {
       _L.fromArray([$Html$Attributes.$class("container")]),
       _L.fromArray([A2($Html.h1,
                    _L.fromArray([]),
+                   _L.fromArray([$Html.text("Should I Do It?")]))
+                   ,A2($Html.h2,
+                   _L.fromArray([]),
                    _L.fromArray([$Html.text(questionString(q))]))
                    ,A2($Html.div,
                    _L.fromArray([$Html$Attributes.$class("answers")]),
@@ -3734,7 +3737,7 @@ Elm.Main.make = function (_elm) {
                       _L.fromArray([$Html$Events.onClick(A2($Signal.send,
                                    uiChannel,
                                    a))
-                                   ,$Html$Attributes.$class("btn btn-info btn-lg")]),
+                                   ,$Html$Attributes.$class("btn btn-lg btn-info")]),
                       _L.fromArray([$Html.text(answerString(a))]));
                    },
                    answers(q)))]))]));
@@ -5380,6 +5383,9 @@ Elm.Native.Json.make = function(localRuntime) {
     var Result = Elm.Result.make(localRuntime);
     var Utils = Elm.Native.Utils.make(localRuntime);
 
+    function isInteger (nVal) {
+        return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
+    }
 
     function crash(expected, actual) {
         throw new Error(
@@ -5417,7 +5423,7 @@ Elm.Native.Json.make = function(localRuntime) {
 
 
     function decodeInt(value) {
-        if (typeof value === 'number' && (value|0) === value) {
+        if (isInteger(value)) {
             return value;
         }
         crash('an Int', value);
